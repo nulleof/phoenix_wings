@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.lightGreen,
       ),
       home: MyHomePage(title: 'Phoenix Wings Chat'),
     );
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
-  final socket = PhoenixSocket("ws://localhost:4000/socket/websocket");
+  final socket = PhoenixSocket("ws://47.101.216.47:4000/socket/websocket");
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -33,22 +33,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    connectSocket();
     super.initState();
+    connectSocket();
   }
 
   connectSocket() async {
     await widget.socket.connect();
+    print('connected');
+
     // Create a new PhoenixChannel
-    _channel = widget.socket.channel("flutter_chat:lobby");
+    _channel = widget.socket.channel("group:system");
     // Setup listeners for channel events
-    _channel.on("say", _say);
+    _channel.on("system_time", _say);
 
     // Make the request to the server to join the channel
     _channel.join();
   }
 
   _say(payload, _ref, _joinRef) {
+    print('receving payload: ${payload}');
     setState(() {
       messages.insert(0, ChatMessage(text: payload["message"]));
     });
@@ -62,9 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Column(
         children: <Widget>[
           Flexible(
@@ -85,14 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
               itemCount: messages.length,
             ),
           ),
-          Divider(
-            height: 1.0,
-          ),
+          Divider(height: 1.0),
           Container(
               child: MessageComposer(
-            textController: _textController,
-            sendMessage: _sendMessage,
-          ))
+                  textController: _textController, sendMessage: _sendMessage))
         ],
       ),
     );

@@ -155,9 +155,9 @@ class PhoenixSocket {
 
     channels
         .where((channel) => channel.isMember(
-            message.topic, message.event, message.payload, message.joinRef))
+            message.topic, message.event, message.payload, message.ref)) // TODO joineRef => ref, at least it works
         .forEach((channel) => channel.trigger(
-            message.event, message.payload, message.ref, message.joinRef));
+            message.event, message.payload, message.ref, message.ref));
     _stateChangeCallbacks.message.forEach((callback) => callback(message));
   }
 
