@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
-  final socket = PhoenixSocket("ws://47.101.216.47:4000/socket/websocket");
+  final socket = PhoenixSocket("ws://localhost:4000/socket/websocket");
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -42,9 +42,9 @@ class _MyHomePageState extends State<MyHomePage> {
     print('connected');
 
     // Create a new PhoenixChannel
-    _channel = widget.socket.channel("group:system");
+    _channel = widget.socket.channel("flutter_chat:lobby");
     // Setup listeners for channel events
-    _channel.on("system_time", _say);
+    _channel.on("say", _say);
 
     // Make the request to the server to join the channel
     _channel.join();
